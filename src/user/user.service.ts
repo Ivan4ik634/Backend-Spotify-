@@ -29,7 +29,7 @@ export class UserService {
       { _id: newUser._id },
       { secret: 'secret', expiresIn: '1h' },
     );
-    const link = `<a href=http://localhost:3000/verify?token=${emailVerifyToken}>Will confirm mail</a>`;
+    const link = `<a href=https://white-spotify.vercel.app/verify?token=${emailVerifyToken}>Will confirm mail</a>`;
     const textEmail = `Thank you for registering! To activate your account, confirm your email using this link ${link}`;
     await this.email.sendEmail(
       newUser.email,
@@ -42,14 +42,14 @@ export class UserService {
   }
   async login(dto: LoginDto) {
     const userUserName = await this.user.findOne({ username: dto.username });
-
+    console.log(userUserName, dto);
     if (userUserName) {
       if (userUserName.password === dto.password) {
         const emailVerifyToken = await this.jwt.signAsync(
           { _id: userUserName._id },
           { secret: 'secret', expiresIn: '1h' },
         );
-        const link = `<a href=http://localhost:3000/verify?token=${emailVerifyToken}>Will confirm mail</a>`;
+        const link = `<a href=https://white-spotify.vercel.app/verify?token=${emailVerifyToken}>Will confirm mail</a>`;
         const textEmail = `Thank you for returning to our platform! To activate your account, confirm your email using this link ${link}`;
         await this.email.sendEmail(
           userUserName.email,
@@ -95,7 +95,7 @@ export class UserService {
   }
 
   async profile(userId: string) {
-    const profile = await this.user.findById(userId)
+    const profile = await this.user.findById(userId);
     return profile;
   }
   async profileUserName(id: string) {
