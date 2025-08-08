@@ -5,6 +5,7 @@ import { PlaylistModule } from './playlist/playlist.module';
 import { SongModule } from './song/song.module';
 import { UploadModule } from './upload/upload.module';
 import { UserModule } from './user/user.module';
+import { PingModule } from './ping/ping.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UserModule } from './user/user.module';
     UploadModule,
     SongModule,
     PlaylistModule,
+    PingModule,
   ],
 })
 export class AppModule {}
