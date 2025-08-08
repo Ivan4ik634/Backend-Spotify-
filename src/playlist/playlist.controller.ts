@@ -22,17 +22,20 @@ export class PlaylistController {
   async findLikes(@CurrectUser() userId: string) {
     return this.playlistService.findLikes(userId);
   }
-  @Get(':id')
-  async findOne(@Param('id') id: string) {
-    return this.playlistService.findOne({ playlistId: id });
+
+  @Get('/profile/:id')
+  async getProfilePlaylist(@Param('id') id: string) {
+    return this.playlistService.getProfilePlaylist(id);
   }
+
   @Get()
   async find() {
     return this.playlistService.find();
   }
-  @Get('/profile/:id')
-  async getProfilePlaylist(@Param('id') id: string) {
-    return this.playlistService.getProfilePlaylist(id);
+
+  @Get(':id')
+  async findOne(@Param('id') id: string) {
+    return this.playlistService.findOne({ playlistId: id });
   }
 
   @Post()
@@ -40,11 +43,13 @@ export class PlaylistController {
   async create(@Body() body: CreatePlayListDto, @CurrectUser() userId: string) {
     return this.playlistService.create(body, userId);
   }
+
   @Post('/like/:id')
   @UseGuards(AuthGuard)
   async like(@Param('id') id: string, @CurrectUser() userId: string) {
     return this.playlistService.like({ playlistId: id }, userId);
   }
+
   @Patch(':id')
   @UseGuards(AuthGuard)
   async update(
@@ -54,6 +59,7 @@ export class PlaylistController {
   ) {
     return this.playlistService.update({ ...body, playlistId: id }, userId);
   }
+
   @Delete(':id')
   @UseGuards(AuthGuard)
   async delete(@Param('id') id: string, @CurrectUser() userId: string) {
