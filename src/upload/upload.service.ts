@@ -12,8 +12,12 @@ export class UploadService {
   constructor() {}
 
   uploadFile(file: Express.Multer.File, isVideo: boolean) {
-    const cleanedOriginalName = file.originalname.replace(/[^\x00-\x7F]/g, '');
+    const cleanedOriginalName = file.originalname
+      .replace(/[^\x00-\x7F]/g, '')
+      .replace(/&/g, 'and')
+      .replace(/\s+/g, '_');
 
+    console.log(cleanedOriginalName);
     return new Promise((resolve, reject) => {
       const uploadStream = cloudinary.uploader.upload_stream(
         {
