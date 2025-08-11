@@ -76,7 +76,7 @@ export class AlbumService {
     const user = await this.user.findById(id);
     if (!user) return 'User not defined';
     const playlists = await this.album
-      .find()
+      .find({ userId: String(user._id) })
       .populate('userId')
       .populate({
         path: 'songs',

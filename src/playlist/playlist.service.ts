@@ -81,7 +81,7 @@ export class PlaylistService {
     const user = await this.user.findById(id);
     if (!user) return 'User not defined';
     const playlists = await this.playlist
-      .find()
+      .find({ userId: String(user._id) })
       .populate('userId')
       .populate({
         path: 'songs',
