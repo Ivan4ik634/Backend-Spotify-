@@ -17,7 +17,9 @@ export class AlbumService {
     if (!user) return 'User not defined';
 
     const newAlbum = await this.album.create({ ...dto, userId: user._id });
-    return newAlbum;
+    const album = await this.album.findById(newAlbum._id).populate('userId');
+
+    return album;
   }
   async find() {
     const albums = await this.album

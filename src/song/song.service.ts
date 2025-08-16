@@ -89,7 +89,9 @@ export class SongService {
     return updatedSong;
   }
   async singleSongs() {
-    const songsWithoutAlbum = await this.song.find({ album: null });
+    const songsWithoutAlbum = await this.song
+      .find({ album: null })
+      .populate('userId');
     return songsWithoutAlbum;
   }
   async addSongToPlaylist(
@@ -123,7 +125,7 @@ export class SongService {
 
     const song = await this.song.findById(id);
     if (!song) return 'Song not defined';
-    if (String(song.userId) === String(user._id))
+    if (String(song.userId) !== String(user._id))
       return 'You can not update your song';
 
     await this.song.deleteOne({ _id: id });

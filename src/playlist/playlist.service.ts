@@ -20,7 +20,10 @@ export class PlaylistService {
       ...dto,
       userId: user._id,
     });
-    return newPlaylist;
+    const playlist = await this.playlist
+      .findById(newPlaylist._id)
+      .populate('userId');
+    return playlist;
   }
   async find() {
     const playlists = await this.playlist
