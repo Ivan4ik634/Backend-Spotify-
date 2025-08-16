@@ -35,11 +35,13 @@ export class SongController {
   ) {
     return this.songService.addSongToPlaylist(dto, userId);
   }
+
   @Post('/like/:id')
   @UseGuards(AuthGuard)
   async likeSong(@Param('id') id: string, @CurrectUser() userId: string) {
     return this.songService.like(userId, id);
   }
+
   @Get()
   async findAll() {
     return this.songService.findAll();
@@ -51,9 +53,14 @@ export class SongController {
     return this.songService.findLikes(userId);
   }
 
+  @Get('/singles')
+  async singleSongs() {
+    return this.songService.singleSongs();
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.songService.findOne(+id);
+    return this.songService.findOne(id);
   }
 
   @Patch(':id')

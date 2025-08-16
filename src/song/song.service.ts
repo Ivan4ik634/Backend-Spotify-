@@ -63,7 +63,7 @@ export class SongService {
     return updateSong;
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const song = await this.song.findOneAndUpdate(
       { _id: id },
       { $inc: { views: 1 } },
@@ -87,6 +87,10 @@ export class SongService {
       },
     );
     return updatedSong;
+  }
+  async singleSongs() {
+    const songsWithoutAlbum = await this.song.find({ album: null });
+    return songsWithoutAlbum;
   }
   async addSongToPlaylist(
     dto: { songId: string; playlistId: string },
