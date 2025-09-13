@@ -17,11 +17,6 @@ export class UserController {
     return this.userService.login(dto);
   }
 
-  @Post('/verifyEmail')
-  async verifyEmail(@Body() { token }: { token: string }) {
-    return this.userService.verifyEmail(token);
-  }
-
   @Get('/profile')
   @UseGuards(AuthGuard)
   async profile(@CurrectUser() userId: string) {

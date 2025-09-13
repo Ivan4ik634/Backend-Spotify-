@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { EmailService } from 'src/email/email.service';
 import { User } from 'src/schemes/User.scheme';
 import { editProfileDto, LoginDto, RegisterDto } from './dto/user';
 @Injectable()
@@ -10,7 +9,6 @@ export class UserService {
   constructor(
     @InjectModel(User.name) private readonly user: Model<User>,
     private readonly jwt: JwtService,
-    private readonly email: EmailService,
   ) {}
   async register(dto: RegisterDto) {
     const user = await this.user.findOne({
@@ -25,55 +23,28 @@ export class UserService {
       };
 
     const newUser = await this.user.create({ ...dto });
-    const emailVerifyToken = await this.jwt.signAsync(
+    const token = await this.jwt.signAsync(
       { _id: newUser._id },
-      { secret: 'secret', expiresIn: '1h' },
-    );
-    const link = `<a href=https://white-spotify.vercel.app/verify?token=${emailVerifyToken}>Will confirm mail</a>`;
-    const textEmail = `Thank you for registering! To activate your account, confirm your email using this link ${link}`;
-    await this.email.sendEmail(
-      newUser.email,
-      'Mail confirmation',
-      textEmail,
-      textEmail,
+      { secret: 'secret', expiresIn: '30d' },
     );
 
-    return { message: 'A letter has appeared in the mail, check it!' };
+    return { token, userId: newUser._id };
   }
   async login(dto: LoginDto) {
     const userUserName = await this.user.findOne({ username: dto.username });
     console.log(userUserName, dto);
     if (userUserName) {
       if (userUserName.password === dto.password) {
-        const emailVerifyToken = await this.jwt.signAsync(
+        const token = await this.jwt.signAsync(
           { _id: userUserName._id },
-          { secret: 'secret', expiresIn: '1h' },
+          { secret: 'secret', expiresIn: '30d' },
         );
-        const link = `<a href=https://white-spotify.vercel.app/verify?token=${emailVerifyToken}>Will confirm mail</a>`;
-        const textEmail = `Thank you for returning to our platform! To activate your account, confirm your email using this link ${link}`;
-        await this.email.sendEmail(
-          userUserName.email,
-          'Mail confirmation',
-          textEmail,
-          textEmail,
-        );
-        return { message: 'A letter has appeared in the mail, check it!' };
+
+        return { token, userId: userUserName._id };
       }
     }
 
     return { message: 'Incorrect login or password' };
-  }
-
-  async verifyEmail(token: string) {
-    const user = await this.jwt.verify(token, { secret: 'secret' });
-    const userVerify = await this.user.findById(user._id);
-    if (!userVerify) return { message: 'User not found' };
-    const newToken = await this.jwt.signAsync(
-      { _id: user._id },
-      { secret: 'secret', expiresIn: '30d' },
-    );
-
-    return { token: newToken, userId: String(user._id) };
   }
 
   async editProfile(userId: string, dto: editProfileDto) {
